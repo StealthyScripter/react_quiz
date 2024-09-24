@@ -3,6 +3,7 @@ import { fetchQuizQuestions, fetchCategories} from './API';
 //components
 import QuestionCards from './Components/QuestionCards';
 import QuestionSelector from './Components/QuestionSelector';
+import ScoreCard from './Components/ScoreCard';
 //types
 import { QuestionState} from './API';
 //styles
@@ -31,7 +32,11 @@ export enum QuestionType {
   BOOLEAN = 'boolean' 
 }
 
-// const TOTAL_QUESTIONS = 10;
+export enum GamePhase {
+  START= 'start',
+  IN_PROGRESS='in_progress',
+  END = 'end',
+}
 
 const App = ()  => {
 
@@ -40,7 +45,7 @@ const App = ()  => {
   const [number, setNumber] = useState(0);
   const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
   const [score, setScore] = useState(0);
-  const [gameOver, setGameOver] = useState(true);
+  const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.START);
   const [categories, setCategories] = useState<Category[]>([]);
   const [category, setCategory] = useState(''); // Store selected category
   const [questionAmount, setQuestionAmount] = useState<number>(10); // Store selected number of questions
@@ -61,7 +66,7 @@ const App = ()  => {
   const startTrivia = async () => {
     try {
     setLoading(true);
-    setGameOver(false);
+    setGamePhase(GamePhase.IN_PROGRESS);
 
     const newQuestion = await fetchQuizQuestions(
     questionAmount,
@@ -83,7 +88,7 @@ const App = ()  => {
   };
 
   const checkAnswer = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (!gameOver) {
+      if (gamePhase === GamePhase.IN_PROGRESS) {
         //user anwer
         const answer = e.currentTarget.value;
         //check answer against correct answer
@@ -97,7 +102,13 @@ const App = ()  => {
           correct,
           correctAnswer: questions[number].correct_answer,
         };
-        setUserAnswers(prev => [...prev, answerObject ])
+        setUserAnswers(prev => [...prev, answerObject ]);
+
+        if (number + 1 === questionAmount) {
+          setGamePhase(GamePhase.END);
+        } else {
+          setNumber((prevNumber) => prevNumber + 1);
+        }
       }
   };
 
@@ -106,10 +117,16 @@ const App = ()  => {
     const nextQuestion = number + 1;
 
     if (nextQuestion === questionAmount) {
-      setGameOver(true);
+      setGamePhase(GamePhase.END);
+      // get data from here to save in a database
+
     } else {
       setNumber(nextQuestion);
     }
+  };
+
+  const restartGame = () => {
+    setGamePhase(GamePhase.START);
   };
 
   return (
@@ -117,7 +134,8 @@ const App = ()  => {
           <GlobalStyle />
           <Wrapper>
             <h1>QuizMe</h1>
-            {gameOver || userAnswers.length === questionAmount ? (
+            {gamePhase === GamePhase.START && (
+
               <QuestionSelector
                 category={category}
                 categories={categories}
@@ -130,56 +148,15 @@ const App = ()  => {
                 setQuestionType={setQuestionType}
                 startQuiz={startTrivia}
               />
-
-            // <div>
-            // <section className='questionselectors'>
-            //   <label>
-            //     Category:
-            //     <select value={category} onChange={(e) => setCategory(e.target.value)}>
-            //       {categories.map((cat) => (
-            //         <option key={cat.id} value={cat.id}>
-            //           {cat.name}
-            //         </option>
-            //       ))}
-            //     </select>
-            //   </label>
-            //   <label>
-            //     Questions:
-            //     <input
-            //       type="number"
-            //       min="1"
-            //       max="50"
-            //       value={questionAmount}
-            //       onChange={(e) => setQuestionAmount(Number(e.target.value))}
-            //     />
-            //   </label>
-            //   <label>
-            //   Difficulty:
-            //     <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)}>
-            //       <option value={Difficulty.EASY}>Easy</option>
-            //       <option value={Difficulty.MEDIUM}>Medium</option>
-            //       <option value={Difficulty.HARD}>Hard</option>
-            //     </select>
-            //   </label>
-            //   <label>
-            //       Question type
-            //       <select value={questionType} onChange={(e) => setQuestionType(e.target.value as QuestionType)}>
-            //         <option value={QuestionType.MULTIPLE}>Multiple choice</option>
-            //         <option value={QuestionType.BOOLEAN}>True/False</option>
-            //       </select>
-            //   </label>
-            //   </section>
-            //   <button className="start" onClick={startTrivia}>
-            //     Start
-            //   </button>
-            // </div>
-            ) : null}
+            ) };
 
         
-        {!gameOver ? <p className="score">Score: {score}</p> : null}
-        {loading && <p>Loading Questions...</p>}
+        {gamePhase === GamePhase.IN_PROGRESS && (
+          <>
+          <p className="score">Score: {score}</p>
+          {loading && <p>Loading Questions...</p>}
         
-        {!loading && !gameOver && questions.length > 0 && questions[number]? (
+        {!loading && questions.length > 0 && questions[number] && (
           <QuestionCards 
             QuestionNr={number + 1}
             totalQuestions={questionAmount}
@@ -188,13 +165,19 @@ const App = ()  => {
             userAnswer={userAnswers ? userAnswers[number] : undefined}
             callback={checkAnswer}
           />
-        ): null }
-        
-        {!gameOver && !loading && userAnswers.length === number + 1 && number !== questionAmount - 1 ? (
+        )};
+        7
+        {!loading && userAnswers.length === number + 1 && number !== questionAmount - 1 ? (
           <button className="Next" onClick={nextQuestion}>
             Next Question
           </button>
         ) : null}
+        </>
+        )}
+
+        {gamePhase === GamePhase.END && (
+          <ScoreCard score={score} restartGame = {restartGame} />
+        ) }
       </Wrapper>
     </>
   );
