@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { fetchQuizQuestions, fetchCategories} from './API';
 //components
 import QuestionCards from './Components/QuestionCards';
+import QuestionSelector from './Components/QuestionSelector';
 //types
 import { QuestionState} from './API';
 //styles
@@ -117,46 +118,61 @@ const App = ()  => {
           <Wrapper>
             <h1>QuizMe</h1>
             {gameOver || userAnswers.length === questionAmount ? (
-            <div>
-              <label>
-                Select Category:
-                <select value={category} onChange={(e) => setCategory(e.target.value)}>
-                  {categories.map((cat) => (
-                    <option key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </option>
-                  ))}
-                </select>
-              </label>
-              <label>
-                Number of Questions:
-                <input
-                  type="number"
-                  min="1"
-                  max="50"
-                  value={questionAmount}
-                  onChange={(e) => setQuestionAmount(Number(e.target.value))}
-                />
-              </label>
-              <label>
-              Select Difficulty:
-                <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)}>
-                  <option value={Difficulty.EASY}>Easy</option>
-                  <option value={Difficulty.MEDIUM}>Medium</option>
-                  <option value={Difficulty.HARD}>Hard</option>
-                </select>
-              </label>
-              <label>
-                  Select Question type
-                  <select value={questionType} onChange={(e) => setQuestionType(e.target.value as QuestionType)}>
-                    <option value={QuestionType.MULTIPLE}>Multiple choice</option>
-                    <option value={QuestionType.BOOLEAN}>True/False</option>
-                  </select>
-              </label>
-              <button className="start" onClick={startTrivia}>
-                Start
-              </button>
-            </div>
+              <QuestionSelector
+                category={category}
+                categories={categories}
+                setCategory={setCategory}
+                questionAmount={questionAmount}
+                setQuestionAmount={setQuestionAmount}
+                difficulty={difficulty}
+                setDifficulty={setDifficulty}
+                questionType={questionType}
+                setQuestionType={setQuestionType}
+                startQuiz={startTrivia}
+              />
+
+            // <div>
+            // <section className='questionselectors'>
+            //   <label>
+            //     Category:
+            //     <select value={category} onChange={(e) => setCategory(e.target.value)}>
+            //       {categories.map((cat) => (
+            //         <option key={cat.id} value={cat.id}>
+            //           {cat.name}
+            //         </option>
+            //       ))}
+            //     </select>
+            //   </label>
+            //   <label>
+            //     Questions:
+            //     <input
+            //       type="number"
+            //       min="1"
+            //       max="50"
+            //       value={questionAmount}
+            //       onChange={(e) => setQuestionAmount(Number(e.target.value))}
+            //     />
+            //   </label>
+            //   <label>
+            //   Difficulty:
+            //     <select value={difficulty} onChange={(e) => setDifficulty(e.target.value as Difficulty)}>
+            //       <option value={Difficulty.EASY}>Easy</option>
+            //       <option value={Difficulty.MEDIUM}>Medium</option>
+            //       <option value={Difficulty.HARD}>Hard</option>
+            //     </select>
+            //   </label>
+            //   <label>
+            //       Question type
+            //       <select value={questionType} onChange={(e) => setQuestionType(e.target.value as QuestionType)}>
+            //         <option value={QuestionType.MULTIPLE}>Multiple choice</option>
+            //         <option value={QuestionType.BOOLEAN}>True/False</option>
+            //       </select>
+            //   </label>
+            //   </section>
+            //   <button className="start" onClick={startTrivia}>
+            //     Start
+            //   </button>
+            // </div>
             ) : null}
 
         
