@@ -38,14 +38,27 @@ export enum GamePhase {
   END = 'end',
 }
 
+const initialState = {
+  loading: false,
+  questions: [] as QuestionState[],
+  // number: 0,
+  userAnswers: [] as AnswerObject[],
+  score: 0,
+  gamePhase: GamePhase.START,
+  // category: "",  // Correct category initialization
+  // questionAmount: 2,
+  // difficulty: Difficulty.EASY,
+  // questionType: QuestionType.BOOLEAN,
+};
+
 const App = ()  => {
 
-  const [loading, setLoading]=useState(false);
-  const [questions, setquestions]=useState<QuestionState[]>([]);
+  const [loading, setLoading]=useState(initialState.loading);
+  const [questions, setQuestions]=useState(initialState.questions);
   const [number, setNumber] = useState(0);
-  const [userAnswers, setUserAnswers] = useState<AnswerObject[]>([]);
-  const [score, setScore] = useState(0);
-  const [gamePhase, setGamePhase] = useState<GamePhase>(GamePhase.START);
+  const [userAnswers, setUserAnswers] = useState(initialState.userAnswers);
+  const [score, setScore] = useState(initialState.score);
+  const [gamePhase, setGamePhase] = useState(initialState.gamePhase);
   const [categories, setCategories] = useState<Category[]>([]);
   const [category, setCategory] = useState(''); // Store selected category
   const [questionAmount, setQuestionAmount] = useState<number>(10); // Store selected number of questions
@@ -61,7 +74,7 @@ const App = ()  => {
     getCategories();
   }, []);
 
-
+  const [ error, setError] =useState<string | null>(null);
 
   const startTrivia = async () => {
     try {
@@ -75,14 +88,16 @@ const App = ()  => {
       questionType
     );
 
-    setquestions(newQuestion);
+    setQuestions(newQuestion);
     setScore(0);
     setUserAnswers([]);
     setNumber(0);
+    setError(null);
     } catch (error) {
     console.error('Error fetching questions:', error);
+    setError('Something went wrong. Please try again');
     } finally {
-    setLoading(false);
+      setLoading(false);
   }
 
   };
@@ -125,8 +140,16 @@ const App = ()  => {
     }
   };
 
+  const resetAllState = () => {
+    setLoading(initialState.loading);
+    setQuestions(initialState.questions);
+    setUserAnswers(initialState.userAnswers);
+    setScore(initialState.score);
+    setGamePhase(initialState.gamePhase);
+  };
+
   const restartGame = () => {
-    setGamePhase(GamePhase.START);
+    resetAllState();
   };
 
   return (
@@ -147,6 +170,7 @@ const App = ()  => {
                 questionType={questionType}
                 setQuestionType={setQuestionType}
                 startQuiz={startTrivia}
+                loading={loading}
               />
             ) };
 
@@ -154,6 +178,7 @@ const App = ()  => {
         {gamePhase === GamePhase.IN_PROGRESS && (
           <>
           <p className="score">Score: {score}</p>
+          {error && <p className='error'>{error}</p>}
           {loading && <p>Loading Questions...</p>}
         
         {!loading && questions.length > 0 && questions[number] && (

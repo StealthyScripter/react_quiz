@@ -1,4 +1,6 @@
 import React from 'react';
+import '../App.styles'
+import './QuestionCards.styles'
 
 type Props = {
   score: number;
@@ -7,9 +9,9 @@ type Props = {
 
 const ScoreCard: React.FC<Props> = ({ score, restartGame }) => {
   return (
-    <div>
-      <p>The game is over! Your score: {score}</p>
-      <button type="button" onClick={restartGame}>
+    <div className='score-card'>
+      <p className='score'> Score: {score}</p>
+      <button type="button" onClick={restartGame} className='styled-button'>
         Try again
       </button>
     </div>

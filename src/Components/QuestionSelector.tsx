@@ -1,5 +1,5 @@
 import React  from 'react';
-import { Difficulty, QuestionType } from '../App';
+import { Difficulty, QuestionType} from '../App';
 import './QuestionSelector.css'; // Custom CSS file
 
 type Props = {
@@ -13,6 +13,7 @@ type Props = {
   questionType: QuestionType;
   setQuestionType: (type: QuestionType) => void;
   startQuiz: () => void;
+  loading:boolean;
 };
 
 const QuestionSelector: React.FC<Props> = ({
@@ -26,6 +27,7 @@ const QuestionSelector: React.FC<Props> = ({
   questionType,
   setQuestionType,
   startQuiz,
+  loading
 }) => {
   return (
     <div className="question-selector-container">
@@ -73,7 +75,8 @@ const QuestionSelector: React.FC<Props> = ({
         </label>
       </div>
 
-      <button className="styled-button" onClick={startQuiz}>Start Quiz</button>
+      <button className="styled-button" onClick={startQuiz} disabled={loading}>
+        {loading ? 'Loading' : 'Start Quiz'}</button>
     </div>
   );
 };
