@@ -63,8 +63,18 @@ export const Wrapper = styled.div`
     }
 
      .start {
-        max-width: 200px;
+        max-width: 300px;
      }
+
+    .questionselectors{
+    display: flex;
+    flex-wrap:nowrap;
+    color:white;
+    justify-content: space-evenly;
+
+    }
 `;
+
+
 
 export{};

@@ -36,7 +36,7 @@ const QuestionCards: React.FC<Props> = ({
         userClicked={userAnswer?.answer === answers}
         >
             {/* {!!userAnswer} alternative for converting it to boolean */}
-            <button disabled = {userAnswer ? true : false} value={answers} onClick={callback}>
+            <button type='button' title= {answers} disabled = {userAnswer ? true : false} value={answers} onClick={callback}>
                 <span dangerouslySetInnerHTML={{__html: answers }}/>
             </button>
         </ButtonWrapper>
