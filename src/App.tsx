@@ -41,14 +41,9 @@ export enum GamePhase {
 const initialState = {
   loading: false,
   questions: [] as QuestionState[],
-  // number: 0,
   userAnswers: [] as AnswerObject[],
   score: 0,
   gamePhase: GamePhase.START,
-  // category: "",  // Correct category initialization
-  // questionAmount: 2,
-  // difficulty: Difficulty.EASY,
-  // questionType: QuestionType.BOOLEAN,
 };
 
 const App = ()  => {
