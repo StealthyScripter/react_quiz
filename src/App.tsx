@@ -167,7 +167,7 @@ const App = ()  => {
                 startQuiz={startTrivia}
                 loading={loading}
               />
-            ) };
+            ) }
 
         
         {gamePhase === GamePhase.IN_PROGRESS && (
@@ -186,7 +186,7 @@ const App = ()  => {
             callback={checkAnswer}
           />
         )};
-        7
+
         {!loading && userAnswers.length === number + 1 && number !== questionAmount - 1 ? (
           <button className="Next" onClick={nextQuestion}>
             Next Question
