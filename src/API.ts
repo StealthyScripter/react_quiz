@@ -1,5 +1,5 @@
 
-import { Difficulty } from './App';
+import { Difficulty, QuestionType } from './App';
 import {shuffleArray} from './utils';
 
 export type Question = {
@@ -14,7 +14,7 @@ export type Question = {
 
 export type QuestionState = Question & { answers: string[]};
 
-export const fetchQuizQuestions = async (amount: number, difficulty: Difficulty, category: string, questionType: string) =>{
+export const fetchQuizQuestions = async (amount: number, difficulty: Difficulty, category: string, questionType: QuestionType) =>{
     //const endpoint = https://opentdb.com/api.php?amount=10&difficulty=easy&type=multiple;
     const endpoint = `https://opentdb.com/api.php?amount=${amount}&difficulty=${difficulty}&category=${category}&type=${questionType}`;
     const data = await (await fetch(endpoint)).json();
